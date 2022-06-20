@@ -76,7 +76,8 @@ const handleChange = (info) => {
   }
 };
 const beforeUpload = (file) => {
-  const isMp3 = file.type === 'audio/mp3';
+console.log(file)
+  const isMp3 = file.name.endsWith('.mp3') && file.type.includes('audio')
   if (!isMp3) {
     message.error('只能上传mp3文件!');
   }
