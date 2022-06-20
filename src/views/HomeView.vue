@@ -19,7 +19,7 @@
     <div class="second">
       <h3>2.上传mp3文件</h3>
       <a-spin tip="上传中" :spinning="spinning">
-      <a-upload :data="{ tone }" v-model:file-list="fileList" accept=".mp3" action="/audio-api/changeTone"
+      <a-upload :data="{ tone }" v-model:file-list="fileList" :before-upload="beforeUpload" accept=".mp3" action="/audio-api/changeTone"
        @change="handleChange" list-type="picture">
         <a-button>
           <upload-outlined></upload-outlined>
@@ -46,7 +46,7 @@
 </template>
 <script setup>
 import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
-import { message } from 'ant-design-vue';
+import { message, Upload } from 'ant-design-vue';
 import { ref } from "vue";
 
 const fileList = ref([]);
@@ -75,6 +75,13 @@ const handleChange = (info) => {
     fileList.value.splice(idx,1)
   }
 };
+const beforeUpload = (file) => {
+  const isMp3 = file.type === 'audio/mp3';
+  if (!isMp3) {
+    message.error('只能上传mp3文件!');
+  }
+  return isMp3 || Upload.LIST_IGNORE
+}
 </script>
 <style lang="scss" scoped>
 /* tile uploaded pictures */
