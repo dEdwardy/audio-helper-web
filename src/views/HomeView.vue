@@ -1,0 +1,122 @@
+<template>
+  <div class="home-view">
+    <div class="first">
+      <h3>1.设置升降调参数</h3>
+      <div class="info">
+        Tips: 升降调可能会导致声音失真，升降的调数越多失真越严重，尽量选择在-5到+5之间保证声音质量。大于+5或者小于-5仅供娱乐
+      </div>
+      <div class="btns">
+        <a-radio-group v-model:value="tone" button-style="solid">
+          <div style="display: flex;flex-wrap: wrap;justify-content: flex-start">
+            <a-radio-button v-for="item of 10" :key="'+' + item" :value="item">{{ '+' + item }}半调</a-radio-button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap;justify-content: flex-start;margin-top:12px">
+            <a-radio-button v-for="item of 10" :key="'-' + item" :value="-item">{{ '-' + item }}半调</a-radio-button>
+          </div>
+        </a-radio-group>
+      </div>
+    </div>
+    <div class="second">
+      <h3>2.上传mp3文件</h3>
+      <a-spin tip="上传中" :spinning="spinning">
+      <a-upload :data="{ tone }" v-model:file-list="fileList" accept=".mp3" action="/audio-api/changeTone"
+       @change="handleChange" list-type="picture">
+        <a-button>
+          <upload-outlined></upload-outlined>
+          上传
+        </a-button>
+        <template #itemRender="{ file, actions }">
+          <div
+            style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
+            <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
+              <span v-if="file.response">{{ file.response.data.name }}</span>
+            </span>
+            <a v-if="file.response" title="下载" style="width:120px" :href="file.response.data.url" target="_blank">
+              <download-outlined style="color:#1890ff;font-size:18px" />
+            </a>
+            <a title="删除" style="width:40px" href="javascript:;" @click="actions.remove">
+              <delete-outlined style="color:#aaa;font-size:18px" />
+            </a>
+          </div>
+        </template>
+      </a-upload>
+      </a-spin>
+    </div>
+  </div>
+</template>
+<script setup>
+import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { message } from 'ant-design-vue';
+import { ref } from "vue";
+
+const fileList = ref([]);
+const tone = ref(2);
+// const handleDownload = file => {
+//   }
+// }
+const spinning = ref(false)
+const handleChange = (info) => {
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, info.fileList);
+  }
+  if (info.file.status === 'uploading') {
+  // show loading
+    spinning.value = true;
+  }
+  if (info.file.status === 'done') {
+  // close loading
+    spinning.value = false;
+    message.success(`${info.file.name} 文件上传成功！`);
+  } else if (info.file.status === 'error') {
+  // close loading
+    spinning.value = false;
+    message.error(`${info.file.name} 文件上传失败！`);
+    const idx = fileList.value.findIndex(item => item.uid === info.file.uid);
+    fileList.value.splice(idx,1)
+  }
+};
+</script>
+<style lang="scss" scoped>
+/* tile uploaded pictures */
+.upload-list-inline :deep(.ant-upload-list-item) {
+  float: left;
+  width: 200px;
+  margin-right: 8px;
+}
+
+.upload-list-inline [class*="-upload-list-rtl"] :deep(.ant-upload-list-item) {
+  float: right;
+}
+
+.home-view {
+  max-width: 1100px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  :deep(.ant-radio-button-wrapper) {
+    width: 84px;
+    margin: 2px 4px;
+  }
+
+  .first {
+    padding: 20px;
+    margin: 10px 20px 20px;
+    border: 1px solid #d9d9d9;
+    text-align: center;
+
+    .info {
+      margin: 12px auto 24px;
+      font-size: 14px;
+      color: #777777;
+    }
+  }
+
+  .second {
+    padding: 20px;
+    margin: 10px 20px 20px;
+    border: 1px solid #d9d9d9;
+    text-align: center;
+    min-height: 500px;
+  }
+}
+</style>
