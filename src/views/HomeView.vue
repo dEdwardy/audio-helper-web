@@ -19,35 +19,35 @@
     <div class="second">
       <h3>2.上传mp3文件</h3>
       <a-spin tip="上传中" :spinning="spinning">
-        <a-upload :data="{ tone }" v-model:file-list="fileList" action="/audio-api/changeTone"
-          @change="handleChange" list-type="picture">
-          <a-button>
-            <upload-outlined></upload-outlined>
-            上传
-          </a-button>
-          <template #itemRender="{ file, actions }">
-            <div
-              style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
-              <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
-                <span v-if="file.response">{{ file.response.data.name }}</span>
-              </span>
-              <a v-if="file.response" title="下载" style="width:120px" :href="file.response.data.url" target="_blank">
-                <download-outlined style="color:#1890ff;font-size:18px" />
-              </a>
-              <a title="删除" style="width:40px" href="javascript:;" @click="actions.remove">
-                <delete-outlined style="color:#aaa;font-size:18px" />
-              </a>
-            </div>
-          </template>
-        </a-upload>
+      <a-upload :data="{ tone }" v-model:file-list="fileList" :before-upload="beforeUpload" accept=".mp3" action="/audio-api/changeTone"
+       @change="handleChange" list-type="picture">
+        <a-button>
+          <upload-outlined></upload-outlined>
+          上传
+        </a-button>
+        <template #itemRender="{ file, actions }">
+          <div
+            style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
+            <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
+              <span v-if="file.response">{{ file.response.data.name }}</span>
+            </span>
+            <a v-if="file.response" title="下载" style="width:120px" :href="file.response.data.url" target="_blank">
+              <download-outlined style="color:#1890ff;font-size:18px" />
+            </a>
+            <a title="删除" style="width:40px" href="javascript:;" @click="actions.remove">
+              <delete-outlined style="color:#aaa;font-size:18px" />
+            </a>
+          </div>
+        </template>
+      </a-upload>
       </a-spin>
     </div>
   </div>
 </template>
 <script setup>
 import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
-import { message } from 'ant-design-vue';
-import { ref, onMounted } from "vue";
+import { message, Upload } from 'ant-design-vue';
+import { ref } from "vue";
 
 const fileList = ref([]);
 const tone = ref(2);
@@ -98,6 +98,14 @@ const fixIos = () => {
 onMounted(() => {
   fixIos()
 })
+const beforeUpload = (file) => {
+console.log(file)
+  const isMp3 = file.name.endsWith('.mp3') && file.type.includes('audio')
+  if (!isMp3) {
+    message.error('只能上传mp3文件!');
+  }
+  return isMp3 || Upload.LIST_IGNORE
+}
 </script>
 <style lang="scss" scoped>
 .home-view {
