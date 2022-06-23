@@ -19,27 +19,27 @@
     <div class="second">
       <h3>2.上传mp3文件</h3>
       <a-spin tip="上传中" :spinning="spinning">
-      <a-upload :data="{ tone }" v-model:file-list="fileList" accept=".mp3" action="/audio-api/changeTone"
-       @change="handleChange" list-type="picture">
-        <a-button>
-          <upload-outlined></upload-outlined>
-          上传
-        </a-button>
-        <template #itemRender="{ file, actions }">
-          <div
-            style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
-            <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
-              <span v-if="file.response">{{ file.response.data.name }}</span>
-            </span>
-            <a v-if="file.response" title="下载" style="width:120px" :href="file.response.data.url" target="_blank">
-              <download-outlined style="color:#1890ff;font-size:18px" />
-            </a>
-            <a title="删除" style="width:40px" href="javascript:;" @click="actions.remove">
-              <delete-outlined style="color:#aaa;font-size:18px" />
-            </a>
-          </div>
-        </template>
-      </a-upload>
+        <a-upload :data="{ tone }" v-model:file-list="fileList" action="/audio-api/changeTone"
+          @change="handleChange" list-type="picture">
+          <a-button>
+            <upload-outlined></upload-outlined>
+            上传
+          </a-button>
+          <template #itemRender="{ file, actions }">
+            <div
+              style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
+              <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
+                <span v-if="file.response">{{ file.response.data.name }}</span>
+              </span>
+              <a v-if="file.response" title="下载" style="width:120px" :href="file.response.data.url" target="_blank">
+                <download-outlined style="color:#1890ff;font-size:18px" />
+              </a>
+              <a title="删除" style="width:40px" href="javascript:;" @click="actions.remove">
+                <delete-outlined style="color:#aaa;font-size:18px" />
+              </a>
+            </div>
+          </template>
+        </a-upload>
       </a-spin>
     </div>
   </div>
@@ -47,7 +47,7 @@
 <script setup>
 import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { message } from 'ant-design-vue';
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 const fileList = ref([]);
 const tone = ref(2);
@@ -60,34 +60,46 @@ const handleChange = (info) => {
     console.log(info.file, info.fileList);
   }
   if (info.file.status === 'uploading') {
-  // show loading
+    // show loading
     spinning.value = true;
   }
   if (info.file.status === 'done') {
-  // close loading
+    // close loading
     spinning.value = false;
     message.success(`${info.file.name} 文件上传成功！`);
   } else if (info.file.status === 'error') {
-  // close loading
+    // close loading
     spinning.value = false;
     message.error(`${info.file.name} 文件上传失败！`);
     const idx = fileList.value.findIndex(item => item.uid === info.file.uid);
-    fileList.value.splice(idx,1)
+    fileList.value.splice(idx, 1)
   }
 };
+const fixIos = () => {
+  //获取浏览器的userAgent,并转化为小写
+  const ua = navigator.userAgent.toLowerCase();
+  //判断是否是苹果手机，是则是true
+  const isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);
+  
+  // var isWeixin = ua.match(/MicroMessenger/i)=="micromessenger";//微信判断
+  // var isQQInstalled = ua.indexOf(' qq')>-1 && ua.indexOf('mqqbrowser') < 0;//qq内置浏览器
+  const isQQ = ua.indexOf('mqqbrowser') > -1 && ua.indexOf(" qq") < 0;//qq浏览器
+  console.error('fixIos',isIos,isQQ)
+  if (isQQ || isIos) {
+    var files = document.querySelectorAll("input[type=file]");
+    if (files) {
+      files.forEach(item => {
+        console.error('remove capture')
+        item.removeAttribute("capture")
+      })
+    }
+  }
+}
+onMounted(() => {
+  fixIos()
+})
 </script>
 <style lang="scss" scoped>
-/* tile uploaded pictures */
-.upload-list-inline :deep(.ant-upload-list-item) {
-  float: left;
-  width: 200px;
-  margin-right: 8px;
-}
-
-.upload-list-inline [class*="-upload-list-rtl"] :deep(.ant-upload-list-item) {
-  float: right;
-}
-
 .home-view {
   max-width: 1100px;
   margin: 0 auto;
