@@ -33,7 +33,7 @@
                   <span v-if="file.response">{{ file.response.data.name }}</span>
                 </span>
                 <a v-if="file.response" title="下载" style="width:120px"
-                  :href="isProd ? '/audio/' + file.response.data.url : 'http://localhost:4004/audio/' + file.response.data.url"
+                  :href="isProd ? '/audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url"
                   target="_blank">
                   <download-outlined style="color:#1890ff;font-size:18px" />
                 </a>
@@ -41,11 +41,11 @@
                   <delete-outlined style="color:#aaa;font-size:18px" />
                 </a>
               </div>
-              <!-- <Aplayer v-if="file.response" :autoplay="false" showLrc :music="{
+              <Aplayer v-if="file.response" :autoplay="false" showLrc :music="{
                 title: file.response.data.name,
-                src: isProd ? '/audio/' + file.response.data.url : 'http://localhost:4004/audio/' + file.response.data.url,
+                src: isProd ? '/audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url,
                 artist: '  未知'
-              }" /> -->
+              }" />
             </div>
           </template>
         </a-upload>
@@ -57,7 +57,7 @@
 import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import { message, Upload } from 'ant-design-vue';
 import { ref, onMounted } from "vue";
-// import Aplayer from 'vue3-aplayer'
+import Aplayer from 'vue3-aplayer'
 
 const fileList = ref([]);
 const tone = ref(2);
