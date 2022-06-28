@@ -124,6 +124,16 @@ const beforeUpload = (file) => {
   display: none;
 }
 .home-view {
+  background-color: rgba(255, 255, 255, 0.13);
+  border-radius: 10px;;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  & * {
+  outline: none !important;
+  border: none !important;
+  }
   max-width: 1100px;
   margin: 0 auto;
   overflow: hidden;
