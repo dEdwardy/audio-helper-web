@@ -104,7 +104,7 @@ const options = {
 </script>
 
 <template>
-  <Particles id="tsparticles" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded" :options="options" />
+  <!-- <Particles id="tsparticles" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded" :options="options" /> -->
   <!-- <Particles id="tsparticles" :particlesInit="particlesInit" :particlesLoaded="particlesLoaded"
     url="http://foo.bar/particles.json" /> -->
   <router-view />

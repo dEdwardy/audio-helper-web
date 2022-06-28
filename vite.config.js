@@ -6,7 +6,16 @@ import path from "path"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // base:'/audio-helper/',
+  base:'/audio-helper/',
+  server:{
+    proxy:{
+      '/api': {
+        target:'http://www.edw4rd.cn:4004/',
+        changeOrigin:true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
   plugins: [
     vue(),
     Components({

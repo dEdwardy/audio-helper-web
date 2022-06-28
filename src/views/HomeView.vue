@@ -33,7 +33,7 @@
                   <span v-if="file.response">{{ file.response.data.name }}</span>
                 </span>
                 <a v-if="file.response" title="下载" style="width:120px"
-                  :href="isProd ? '/download-audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url"
+                  :href="isProd ? '/download-audio/' + file.response.data.url : '/api/audio/' + file.response.data.url"
                   target="_blank">
                   <download-outlined style="color:#1890ff;font-size:18px" />
                 </a>
@@ -41,11 +41,20 @@
                   <delete-outlined style="color:#aaa;font-size:18px" />
                 </a>
               </div>
-              <Aplayer v-if="file.response" :autoplay="false" showLrc :music="{
+              <!-- <Aplayer v-if="file.response" :autoplay="false" showLrc :music="{
                 title: file.response.data.name,
-                src: isProd ? '/audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url,
+                src: isProd ? '/audio/' +file.response.data.url : '/api/audio/'+file.response.data.url,
                 artist: '  未知'
-              }" />
+              }" /> -->
+              <kinesis-container v-if="file.response"
+                :audio="isProd ? '/audio/' + file.response.data.url : '/api/audio/' + file.response.data.url">
+                <kinesis-audio :audioIndex="10">
+                  <kinesis-element :strength="10" type="depth">
+                    ...asfaf
+                  </kinesis-element>
+                </kinesis-audio>
+                ...sfa
+              </kinesis-container>
             </div>
           </template>
         </a-upload>
@@ -58,6 +67,7 @@ import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/ic
 import { message, Upload } from 'ant-design-vue';
 import { ref, onMounted } from "vue";
 import Aplayer from 'vue3-aplayer'
+import { KinesisContainer, KinesisElement, KinesisAudio } from 'vue-kinesis';
 
 const fileList = ref([]);
 const tone = ref(2);
@@ -65,7 +75,7 @@ const tone = ref(2);
 //   }
 // }
 const isProd = import.meta.env.PROD
-const action = isProd ? '/audio-api/changeTone' : 'http://localhost:4004/changeTone'
+const action = isProd ? '/audio-api/changeTone' : '/api/changeTone'
 const spinning = ref(false)
 const handleChange = (info) => {
   if (info.file.status !== 'uploading') {
@@ -77,8 +87,8 @@ const handleChange = (info) => {
   }
   if (info.file.status === 'done') {
     // close loading
-      spinning.value = false;
-      message.success(`${info.file.name} 文件上传成功`);
+    spinning.value = false;
+    message.success(`${info.file.name} 文件上传成功`);
   } else if (info.file.status === 'error') {
     // close loading
     spinning.value = false;
@@ -120,20 +130,18 @@ const beforeUpload = (file) => {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep(.aplayer-author){
-  display: none;
+// ::v-deep(.aplayer-author){
+//   display: none;
+// }
+::v-deep(.aplayer-volume) {
+  background: #1890ff !important;
 }
+
+::v-deep(.aplayer-played) {
+  background: #1890ff !important;
+}
+
 .home-view {
-  background-color: rgba(255, 255, 255, 0.13);
-  border-radius: 10px;;
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
-  & * {
-  outline: none !important;
-  border: none !important;
-  }
   max-width: 1100px;
   margin: 0 auto;
   overflow: hidden;
