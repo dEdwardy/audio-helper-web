@@ -33,7 +33,7 @@
                   <span v-if="file.response">{{ file.response.data.name }}</span>
                 </span>
                 <a v-if="file.response" title="下载" style="width:120px"
-                  :href="isProd ? '/audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url"
+                  :href="isProd ? '/download-audio/' +file.response.data.url : 'http://localhost:4004/audio/'+file.response.data.url"
                   target="_blank">
                   <download-outlined style="color:#1890ff;font-size:18px" />
                 </a>
