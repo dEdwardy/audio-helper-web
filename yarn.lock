@@ -33,6 +33,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ant-design/icons-vue@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@ant-design/icons-vue@npm:7.0.1"
+  dependencies:
+    "@ant-design/colors": "npm:^6.0.0"
+    "@ant-design/icons-svg": "npm:^4.2.1"
+  peerDependencies:
+    vue: ">=3.0.3"
+  checksum: 10c0/4b35de5986218ceba1992bbf803ba11d8a4949c61c748bc3f6f71165b4563536d7478217bc5d34d1d85fcc917b11234a15eef7c77294ecb5ee9f8add654b10ca
+  languageName: node
+  linkType: hard
+
 "@antfu/utils@npm:^0.5.1":
   version: 0.5.2
   resolution: "@antfu/utils@npm:0.5.2"
@@ -1483,6 +1495,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mp3-helpers@workspace:."
   dependencies:
+    "@ant-design/icons-vue": "npm:^7.0.1"
     "@vitejs/plugin-vue": "npm:^2.3.3"
     ant-design-vue: "npm:^3.2.7"
     axios: "npm:^0.27.2"

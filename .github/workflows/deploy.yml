@@ -1,0 +1,32 @@
+name: Build and Deploy
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 构建环境使用 ubuntu
+    steps:
+      - name: Checkout  # 将代码拉到虚拟机
+        uses: actions/checkout@v4.1.5 
+        with:
+          persist-credentials: false
+
+      - name: Install and Build # 下载依赖 打包项目
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_USER: ${{ secrets.SSH_USERNAME }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          SOURCE: ./dist/*
+          TARGET: /usr/pros/audio-help-web/
+        run: |
+          echo "$SSH_PRIVATE_KEY" > id_rsa
+          chmod 600 id_rsa
+          scp -r -o StrictHostKeyChecking=no -i id_rsa $SOURCE $REMOTE_USER@$REMOTE_HOST:$TARGET
+        shell: bash

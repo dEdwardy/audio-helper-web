@@ -18,15 +18,24 @@
     </div>
     <div class="second">
       <h3>2.上传mp3文件</h3>
+      <div style="text-align:right;margin-bottom:20px">
+        <a-button @click="reset" >清空历史</a-button><br>
+      </div>
       <a-spin tip="上传中" :spinning="spinning">
-        <a-upload :data="{ tone }" v-model:file-list="fileList" :before-upload="beforeUpload" accept=".mp3"
-          :action="action" @change="handleChange" list-type="picture">
-          <a-button>
-            <upload-outlined></upload-outlined>
-            上传
-          </a-button>
+        <a-upload class="avatar-uploader" :data="{ tone }" v-model:file-list="fileList" :before-upload="beforeUpload"
+          accept=".mp3" :action="action" @change="handleChange" list-type="picture" style="width:100%">
+          <!-- <div class="flex justify-between items-center" style="gap:200px">
+            <a-button>
+              <upload-outlined></upload-outlined>
+              上传
+            </a-button>
+          </div> -->
+          <div style="padding:60px 1em;border:1px dashed blue;width:100%">
+            <PlusOutlined></PlusOutlined>
+            <div class="ant-upload-text">Upload</div>
+          </div>
           <template #itemRender="{ file, actions }">
-            <div>
+            <div v-if="file.response">
               <div
                 style="display: flex;justify-content: space-between;align-items: center;padding:10px 20px;margin-top:12px;border: 1px solid #d9d9d9;">
                 <span :style="file.status === 'error' ? 'color: red;flex:1' : 'flex:1'">
@@ -46,14 +55,11 @@
                 src: isProd ? '/audio/' +file.response.data.url : '/api/audio/'+file.response.data.url,
                 artist: '  未知'
               }" /> -->
-              <kinesis-container v-if="file.response"
-                :audio="isProd ? '/audio/' + file.response.data.url : '/api/audio/' + file.response.data.url">
+              <kinesis-container ref="audioRef" v-if="file.response" :audio="'http://localhost:4004/audio/' + file.response.data.url" playAudio>
                 <kinesis-audio :audioIndex="10">
                   <kinesis-element :strength="10" type="depth">
-                    ...asfaf
                   </kinesis-element>
                 </kinesis-audio>
-                ...sfa
               </kinesis-container>
             </div>
           </template>
@@ -63,19 +69,15 @@
   </div>
 </template>
 <script setup>
-import { UploadOutlined, DownloadOutlined, DeleteOutlined } from "@ant-design/icons-vue";
+import { DownloadOutlined, DeleteOutlined,PlusOutlined } from "@ant-design/icons-vue";
 import { message, Upload } from 'ant-design-vue';
 import { ref, onMounted } from "vue";
-import Aplayer from 'vue3-aplayer'
 import { KinesisContainer, KinesisElement, KinesisAudio } from 'vue-kinesis';
 
-const fileList = ref([]);
+const defaultList = localStorage.getItem('mp3') ? JSON.parse(localStorage.getItem('mp3')) : []
+const fileList = ref(defaultList ?? []);
 const tone = ref(2);
-// const handleDownload = file => {
-//   }
-// }
-const isProd = import.meta.env.PROD
-const action = isProd ? '/audio-api/changeTone' : '/api/changeTone'
+const action = '/api/changeTone'
 const spinning = ref(false)
 const handleChange = (info) => {
   if (info.file.status !== 'uploading') {
@@ -88,7 +90,10 @@ const handleChange = (info) => {
   if (info.file.status === 'done') {
     // close loading
     spinning.value = false;
+    console.log(fileList.value)
+    // localforage.setItem('mp3',)
     message.success(`${info.file.name} 文件上传成功`);
+    localStorage.setItem('mp3', JSON.stringify(fileList.value))
   } else if (info.file.status === 'error') {
     // close loading
     spinning.value = false;
@@ -97,6 +102,11 @@ const handleChange = (info) => {
     fileList.value.splice(idx, 1)
   }
 };
+const reset = (e) => {
+  e.preventDefault()
+  localStorage.setItem('mp3', '')
+  fileList.value = []
+}
 const fixIos = () => {
   //获取浏览器的userAgent,并转化为小写
   const ua = navigator.userAgent.toLowerCase();
@@ -171,5 +181,28 @@ const beforeUpload = (file) => {
     text-align: center;
     min-height: 500px;
   }
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+</style>
+
+<style>
+.ant-upload.ant-upload-select{
+  width:100%;
+  cursor: pointer;
 }
 </style>

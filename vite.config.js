@@ -10,9 +10,14 @@ export default defineConfig({
   server:{
     proxy:{
       '/api': {
-        target:'http://www.edw4rd.cn:4004/',
+        target:'http://localhost:4004/',
         changeOrigin:true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/mp3': {
+        target:'http://localhost:4004/',
+        changeOrigin:true,
+        rewrite: (path) => path.replace(/^\/mp3/, 'audio')
       }
     }
   },
